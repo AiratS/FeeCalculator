@@ -52,7 +52,7 @@ class CsvTransactionDataValidator
             throw new InvalidParameterException('The given operation type is invalid.');
         }
 
-        if (!preg_match('/^\d+(?:.\d+)?$/', $rowData[CsvTransactionDataColumn::AMOUNT])) {
+        if (!preg_match('/^\d+(?:\.\d+)?$/', $rowData[CsvTransactionDataColumn::AMOUNT])) {
             throw new InvalidParameterException('The given money amount is invalid.');
         }
 
