@@ -1,4 +1,4 @@
-##Fee calculator application.
+## Fee calculator application.
 ***
 
 ### 1. How to run application 
