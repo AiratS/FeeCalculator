@@ -1,0 +1,102 @@
+# config/services.yaml
+parameters:
+  currency.default: 'EUR'
+  currency.supported:
+    - 'EUR'
+    - 'USD'
+    - 'JPY'
+
+  fee_scale: 2
+  fee_percentage.deposit: 0.03
+  fee_percentage.withdraw_private_client: 0.3
+  fee_percentage.withdraw_business_client: 0.5
+  fee_max_free_amount: 1000
+  fee_free_operations_count: 3
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  _instanceof:
+    Symfony\Component\Console\Command\Command:
+      tags: ['command']
+    App\TransactionData\TransactionDataParserInterface:
+      tags: ['transaction_data_parser']
+    App\FeeCalculator\FeeCalculatorInterface:
+      tags: ['fee_calculator']
+
+  App\Core\Application:
+    public: true
+    arguments:
+      - !tagged command
+
+  app.transaction_data_parsers_container:
+    class: App\TransactionData\TransactionDataParsersContainer
+    arguments:
+      - !tagged transaction_data_parser
+
+  app.file_format_resolver:
+    class: App\Service\FileFormatResolver
+
+  app.file_transaction_fee_calculator:
+    class: App\Service\FileTransactionFeeCalculator
+    arguments:
+      - '@app.transaction_data_parsers_container'
+      - '@app.file_format_resolver'
+      - '@app.fee_calculators_container'
+
+  app.csv_transaction_data_validator:
+    class: App\TransactionData\CsvTransactionDataValidator
+    arguments:
+      - '%currency.supported%'
+
+  app.csv_transaction_data_parser:
+    class: App\TransactionData\CsvTransactionDataParser
+    arguments:
+      - '@app.csv_transaction_data_validator'
+
+  app.calculate_fee_command:
+    class: App\Command\CalculateFeeCommand
+    arguments: ['@app.file_transaction_fee_calculator']
+
+  app.withdraw_private_client_week_transaction_history:
+    class: App\FeeCalculator\WithdrawPrivateClientWeekTransactionHistory
+
+  app.currency_converter:
+    class: App\Service\CurrencyConverter
+
+  app.math:
+    class: App\Service\Math
+    arguments:
+      - '%fee_scale%'
+
+  app.deposit_fee_calculator:
+    class: App\FeeCalculator\DepositFeeCalculator
+    arguments:
+      - '%fee_percentage.deposit%'
+      - '@app.math'
+
+  app.withdraw_private_client_fee_calculator:
+    class: App\FeeCalculator\WithdrawPrivateClientFeeCalculator
+    arguments:
+      - '%fee_percentage.withdraw_private_client%'
+      - '%fee_max_free_amount%'
+      - '%fee_free_operations_count%'
+      - '%currency.default%'
+    calls:
+      - setWeekTransactionHistory: ['@app.withdraw_private_client_week_transaction_history']
+      - setCurrencyConverter: ['@app.currency_converter']
+      - setMath: ['@app.math']
+
+  app.withdraw_business_client_fee_calculator:
+    class: App\FeeCalculator\WithdrawBusinessClientFeeCalculator
+    arguments:
+      - '%fee_percentage.withdraw_business_client%'
+      - '@app.math'
+
+  app.fee_calculators_container:
+    class: App\FeeCalculator\FeeCalculatorsContainer
+    public: true
+    arguments:
+      - !tagged fee_calculator
