@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use HttpRequestException;
-use HttpResponseException;
-use App\Exception\CouldNotDecodeJsonException;
+use App\Exception\ApiCurrencyLayerException;
 
 class ApiCurrencyLayer
 {
@@ -35,9 +33,7 @@ class ApiCurrencyLayer
 
     /**
      * @return array
-     * @throws CouldNotDecodeJsonException
-     * @throws HttpRequestException
-     * @throws HttpResponseException
+     * @throws ApiCurrencyLayerException
      */
     public function getExchangeRateData(): array
     {
@@ -54,16 +50,16 @@ class ApiCurrencyLayer
         curl_close($curl);
 
         if (false === $response) {
-            throw new HttpRequestException();
+            throw new ApiCurrencyLayerException('There is no response from API.');
         }
 
         $rates = json_decode($response, true);
         if (null === $rates) {
-            throw new CouldNotDecodeJsonException();
+            throw new ApiCurrencyLayerException('Could not decode the API response');
         }
 
         if (!isset($rates['quotes'])) {
-            throw new HttpResponseException();
+            throw new ApiCurrencyLayerException('Invalid API response.');
         }
 
         return $rates['quotes'];
