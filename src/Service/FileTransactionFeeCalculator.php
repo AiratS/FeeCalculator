@@ -13,6 +13,11 @@ use App\TransactionData\TransactionDataParsersContainer;
 class FileTransactionFeeCalculator
 {
     /**
+     * @var int
+     */
+    private int $feeScale;
+
+    /**
      * @var TransactionDataParsersContainer
      */
     private TransactionDataParsersContainer $parsersContainer;
@@ -28,15 +33,18 @@ class FileTransactionFeeCalculator
     private FeeCalculatorsContainer $calculatorsContainer;
 
     /**
+     * @param int $feeScale
      * @param TransactionDataParsersContainer $parsersContainer
      * @param FileFormatResolver $formatResolver
      * @param FeeCalculatorsContainer $calculatorsContainer
      */
     public function __construct(
+        int $feeScale,
         TransactionDataParsersContainer $parsersContainer,
         FileFormatResolver $formatResolver,
         FeeCalculatorsContainer $calculatorsContainer
     ) {
+        $this->feeScale = $feeScale;
         $this->parsersContainer = $parsersContainer;
         $this->formatResolver = $formatResolver;
         $this->calculatorsContainer = $calculatorsContainer;
@@ -56,7 +64,7 @@ class FileTransactionFeeCalculator
         /** @var TransactionData $data */
         foreach ($parser->parse($filePath) as $data) {
             $calculator = $this->calculatorsContainer->getCalculator($data->getOperationType(), $data->getUserType());
-            yield $calculator->getFee($data);
+            yield round($calculator->getFee($data), $this->feeScale);
         }
     }
 }

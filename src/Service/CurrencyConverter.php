@@ -4,42 +4,96 @@ declare(strict_types=1);
 
 namespace App\Service;
 
+use Exception;
+use App\Exception\CouldNotConvertConvertCurrencyException;
+use App\Exception\CurrencyConverterException;
+
 class CurrencyConverter
 {
     /**
-     * @param string $fromCurrency
-     * @param string $toCurrency
-     * @param string $amount
-     * @return string
+     * In the free version of the API, exchange rates are shown only against the dollar
      */
-    public function convert(string $fromCurrency, string $toCurrency, string $amount): string
+    const BASE_CURRENCY = 'USD';
+
+    /**
+     * @var ApiCurrencyLayer
+     */
+    private ApiCurrencyLayer $apiCurrencyLayer;
+
+    /**
+     * @var Math
+     */
+    private Math $math;
+
+    /**
+     * @var array
+     */
+    private array $rates = [];
+
+    /**
+     * @param ApiCurrencyLayer $apiCurrencyLayer
+     * @param Math $math
+     */
+    public function __construct(ApiCurrencyLayer $apiCurrencyLayer, Math $math)
     {
-        if ($fromCurrency === 'USD' && $toCurrency === 'EUR') {
-            $amount = $this->toDefault($amount, 1.1497);
-        }
-
-        if ($fromCurrency === 'EUR' && $toCurrency === 'USD') {
-            $amount = $this->fromDefault($amount, 1.1497);
-        }
-
-        if ($fromCurrency === 'JPY' && $toCurrency === 'EUR') {
-            $amount = $this->toDefault($amount, 129.53);
-        }
-
-        if ($fromCurrency === 'EUR' && $toCurrency === 'JPY') {
-            $amount = $this->fromDefault($amount, 129.53);
-        }
-
-        return (string) $amount;
+        $this->apiCurrencyLayer = $apiCurrencyLayer;
+        $this->math = $math;
     }
 
-    private function toDefault($target, $price)
+    /**
+     * @param string $currentCurrency
+     * @param string $targetCurrency
+     * @param string $currentAmount
+     * @return string
+     * @throws CouldNotConvertConvertCurrencyException
+     */
+    public function convert(string $currentCurrency, string $targetCurrency, string $currentAmount): string
     {
-        return $target / $price;
+        try {
+            if ($this->math->equals($currentAmount, '0.0')) {
+                return '0.0';
+            }
+
+            $currentBaseRate = $this->getBaseRate($currentCurrency);
+            $targetBaseRate = $this->getBaseRate($targetCurrency);
+
+            return $this->math->divide($this->math->multiply($currentAmount, $targetBaseRate), $currentBaseRate);
+        } catch (Exception $e) {
+            throw new CouldNotConvertConvertCurrencyException('Could not convert currency', 0, $e);
+        }
     }
 
-    private function fromDefault($current, $price)
+    /**
+     * @param string $currency
+     * @return string
+     * @throws CurrencyConverterException
+     */
+    private function getBaseRate(string $currency): string
     {
-        return $current * $price;
+        $rates = $this->getRates();
+        $key = self::BASE_CURRENCY . $currency;
+
+        if (!isset($rates[$key])) {
+            throw new CurrencyConverterException(sprintf('The given currency "%s" is not found in rates.', $currency));
+        }
+
+        return (string) $rates[$key];
+    }
+
+    /**
+     * @return array
+     * @throws CurrencyConverterException
+     */
+    private function getRates(): array
+    {
+        try {
+            if (empty($this->rates)) {
+                $this->rates = $this->apiCurrencyLayer->getExchangeRateData();
+            }
+
+            return $this->rates;
+        } catch (Exception $e) {
+            throw new CurrencyConverterException('Could not request currency rates.', 0, $e);
+        }
     }
 }

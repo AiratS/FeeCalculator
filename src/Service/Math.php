@@ -7,16 +7,19 @@ namespace App\Service;
 class Math
 {
     /**
-     * @var int
-     */
-    private int $scale;
-
-    /**
      * @param int $scale
      */
     public function __construct(int $scale = 0)
     {
-        $this->scale = $scale;
+        $this->setScale($scale);
+    }
+
+    /**
+     * @param int $scale
+     */
+    public function setScale(int $scale)
+    {
+        bcscale($scale);
     }
 
     /**
@@ -26,7 +29,7 @@ class Math
      */
     public function add(string $num1, string $num2): string
     {
-        return bcadd($num1, $num2, $this->scale);
+        return bcadd($num1, $num2);
     }
 
     /**
@@ -36,7 +39,7 @@ class Math
      */
     public function substract(string $num1, string $num2): string
     {
-        return bcsub($num1, $num2, $this->scale);
+        return bcsub($num1, $num2);
     }
 
     /**
@@ -46,7 +49,7 @@ class Math
      */
     public function multiply(string $num1, string $num2): string
     {
-        return bcmul($num1, $num2, $this->scale);
+        return bcmul($num1, $num2);
     }
 
     /**
@@ -56,7 +59,7 @@ class Math
      */
     public function divide(string $num1, string $num2): string
     {
-        return bcdiv($num1, $num2, $this->scale);
+        return bcdiv($num1, $num2);
     }
 
     /**
@@ -66,7 +69,7 @@ class Math
      */
     public function compare(string $num1, string $num2): int
     {
-        return bccomp($num1, $num2, $this->scale);
+        return bccomp($num1, $num2);
     }
 
     /**

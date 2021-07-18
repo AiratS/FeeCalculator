@@ -13,6 +13,11 @@ parameters:
   fee_max_free_amount: 1000
   fee_free_operations_count: 3
 
+  api.currency_layer.domain: 'http://api.currencylayer.com'
+  api.currency_layer.access_key: 'cce4d0539a291173c629e6a164e6e3da'
+
+  math.calculation_scale: 5
+
 services:
   _defaults:
     autowire: true
@@ -42,6 +47,7 @@ services:
   app.file_transaction_fee_calculator:
     class: App\Service\FileTransactionFeeCalculator
     arguments:
+      - '%fee_scale%'
       - '@app.transaction_data_parsers_container'
       - '@app.file_format_resolver'
       - '@app.fee_calculators_container'
@@ -63,13 +69,22 @@ services:
   app.withdraw_private_client_week_transaction_history:
     class: App\FeeCalculator\WithdrawPrivateClientWeekTransactionHistory
 
+  app.api_currency_layer:
+    class: App\Service\ApiCurrencyLayer
+    arguments:
+      - '%api.currency_layer.domain%'
+      - '%api.currency_layer.access_key%'
+
   app.currency_converter:
     class: App\Service\CurrencyConverter
+    arguments:
+      - '@app.api_currency_layer'
+      - '@app.math'
 
   app.math:
     class: App\Service\Math
     arguments:
-      - '%fee_scale%'
+      - '%math.calculation_scale%'
 
   app.deposit_fee_calculator:
     class: App\FeeCalculator\DepositFeeCalculator

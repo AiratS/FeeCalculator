@@ -58,5 +58,7 @@ class CsvTransactionDataParser implements TransactionDataParserInterface
                 ->setCurrency($rowData[CsvTransactionDataColumn::CURRENCY])
             ;
         }
+
+        fclose($resource);
     }
 }

@@ -35,7 +35,6 @@ class CalculateFeeCommand extends Command
         parent::__construct();
     }
 
-
     protected function configure(): void
     {
         $this->setDescription('Calculates fee for given file.');
@@ -67,7 +66,7 @@ class CalculateFeeCommand extends Command
                 $output->writeln($fee);
             }
         } catch (Exception $e) {
-            $output->writeln(sprintf('%s', $e->getMessage()));
+            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
             return Command::FAILURE;
         }
 
