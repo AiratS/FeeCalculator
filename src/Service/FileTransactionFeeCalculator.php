@@ -64,7 +64,7 @@ class FileTransactionFeeCalculator
         /** @var TransactionData $data */
         foreach ($parser->parse($filePath) as $data) {
             $calculator = $this->calculatorsContainer->getCalculator($data->getOperationType(), $data->getUserType());
-            yield round($calculator->getFee($data), $this->feeScale);
+            yield $calculator->getFee($data);
         }
     }
 }
