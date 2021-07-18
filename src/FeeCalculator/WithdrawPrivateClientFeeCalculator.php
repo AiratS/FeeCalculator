@@ -6,6 +6,7 @@ namespace App\FeeCalculator;
 
 use App\Enum\TransactionOperationType;
 use App\Enum\TransactionUserType;
+use App\Exception\CouldNotConvertConvertCurrencyException;
 use App\Service\CurrencyConverter;
 use App\Service\Math;
 use App\TransactionData\TransactionData;
@@ -113,6 +114,7 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     /**
      * @param TransactionData $transactionData
      * @return string
+     * @throws CouldNotConvertConvertCurrencyException
      */
     public function getFee(TransactionData $transactionData): string
     {
@@ -158,6 +160,7 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     /**
      * @param array $transactions
      * @return string
+     * @throws CouldNotConvertConvertCurrencyException
      */
     private function getTransactionsTotalAmount(array $transactions): string
     {
@@ -171,6 +174,7 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
      * @param string $currency
      * @param string $amount
      * @return string
+     * @throws CouldNotConvertConvertCurrencyException
      */
     private function convertToDefaultCurrency(string $currency, string $amount): string
     {

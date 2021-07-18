@@ -22,7 +22,7 @@ interface FeeCalculatorInterface
 
     /**
      * @param TransactionData $transactionData
-     * @return float
+     * @return string
      */
     public function getFee(TransactionData $transactionData): string;
 }
