@@ -1,7 +1,7 @@
 ## Fee calculator application.
 ***
 
-### 1. How to run application 
+### 1. How to run the application 
    
 Run this command `docker-compose run app php app.php app:calculate-fee input.csv` in `<application-root>/docker` directory
 
