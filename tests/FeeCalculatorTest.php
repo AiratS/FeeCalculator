@@ -5,6 +5,9 @@ declare(strict_types=1);
 use App\Enum\TransactionOperationType;
 use App\Enum\TransactionUserType;
 use App\FeeCalculator\FeeCalculatorsContainer;
+use App\FeeCalculator\WithdrawPrivateClientFeeCalculator;
+use App\Service\CurrencyConverter;
+use App\Service\Math;
 use App\TransactionData\TransactionData;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\FileLocator;
@@ -13,6 +16,11 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 final class FeeCalculatorTest extends TestCase
 {
+    /**
+     * @var ContainerBuilder
+     */
+    private ContainerBuilder $container;
+
     /**
      * @var FeeCalculatorsContainer
      */
@@ -163,17 +171,95 @@ final class FeeCalculatorTest extends TestCase
     private function getCalculatorsContainer(): FeeCalculatorsContainer
     {
         if (!isset($this->calculatorsContainer)) {
-            $container = new ContainerBuilder();
-            $loader = new YamlFileLoader($container, new FileLocator(__DIR__));
-            $loader->load('../config/services.yaml');
-
+            $container = $this->getContainer();
             $this->calculatorsContainer = new FeeCalculatorsContainer([
                 $container->get('app.deposit_fee_calculator'),
-                $container->get('app.withdraw_private_client_fee_calculator'),
+                $this->getWithdrawPrivateClientCalculator($container),
                 $container->get('app.withdraw_business_client_fee_calculator'),
             ]);
         }
 
         return $this->calculatorsContainer;
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     * @return WithdrawPrivateClientFeeCalculator
+     * @throws Exception
+     */
+    private function getWithdrawPrivateClientCalculator(ContainerBuilder $container): WithdrawPrivateClientFeeCalculator
+    {
+        /** @var WithdrawPrivateClientFeeCalculator $withdrawPrivateClientCalculator */
+        $withdrawPrivateClientCalculator = $container->get('app.withdraw_private_client_fee_calculator');
+        $withdrawPrivateClientCalculator->setCurrencyConverter($this->createCurrencyConverterMock());
+
+        return $withdrawPrivateClientCalculator;
+    }
+
+    /**
+     * @return object
+     */
+    private function createCurrencyConverterMock(): object
+    {
+        $stub = $this->createMock(CurrencyConverter::class);
+        $stub->method('convert')
+            ->will($this->returnCallback(function (string $currentCurrency, string $targetCurrency, string $currentAmount) {
+                if ('USD' === $currentCurrency && 'EUR' === $targetCurrency) {
+                    $currentAmount = $this->currencyConvertToEuro($currentAmount, '1.1497');
+                } elseif ('EUR' === $currentCurrency && 'USD' === $targetCurrency) {
+                    $currentAmount = $this->currencyConvertFromEuroToGiven($currentAmount, '1.1497');
+                } elseif ('JPY' === $currentCurrency && 'EUR' === $targetCurrency) {
+                    $currentAmount = $this->currencyConvertToEuro($currentAmount, '129.53');
+                } elseif ('EUR' === $currentCurrency && 'JPY' === $targetCurrency) {
+                    $currentAmount = $this->currencyConvertFromEuroToGiven($currentAmount, '129.53');
+                }
+
+                return $currentAmount;
+            }));
+
+        return $stub;
+    }
+
+    /**
+     * @param string $amount
+     * @param string $rate
+     * @return string
+     * @throws Exception
+     */
+    private function currencyConvertToEuro(string $amount, string $rate): string
+    {
+        /** @var Math $math */
+        $math = $this->getContainer()->get('app.math');
+
+        return $math->divide($amount, $rate);
+    }
+
+    /**
+     * @param string $amount
+     * @param string $rate
+     * @return string
+     * @throws Exception
+     */
+    private function currencyConvertFromEuroToGiven(string $amount, string $rate): string
+    {
+        /** @var Math $math */
+        $math = $this->getContainer()->get('app.math');
+
+        return $math->multiply($amount, $rate);
+    }
+
+    /**
+     * @return ContainerBuilder
+     * @throws Exception
+     */
+    private function getContainer(): ContainerBuilder
+    {
+        if (!isset($this->container)) {
+            $this->container = new ContainerBuilder();
+            $loader = new YamlFileLoader($this->container, new FileLocator(__DIR__));
+            $loader->load('../config/services.yaml');
+        }
+
+        return $this->container;
     }
 }
