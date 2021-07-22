@@ -77,6 +77,7 @@ services:
   app.api_currency_layer:
     class: App\Service\ApiCurrencyLayer
     arguments:
+      - '@vendor.http_client'
       - '%api.currency_layer.domain%'
       - '%api.currency_layer.access_key%'
 
@@ -131,3 +132,6 @@ services:
     class: App\Service\CurrencyRounder
     arguments:
       - '@app.supported_currency'
+
+  vendor.http_client:
+    class: Symfony\Component\HttpClient\CurlHttpClient

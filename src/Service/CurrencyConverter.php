@@ -10,11 +10,6 @@ use App\Exception\CurrencyConverterException;
 
 class CurrencyConverter
 {
-    /**
-     * In the free version of the API, exchange rates are shown only against the dollar
-     */
-    public const BASE_CURRENCY = 'USD';
-
     private ApiCurrencyLayer $apiCurrencyLayer;
     private Math $math;
     private array $rates = [];
@@ -50,7 +45,7 @@ class CurrencyConverter
     private function getBaseRate(string $currency): string
     {
         $rates = $this->getRates();
-        $key = self::BASE_CURRENCY . $currency;
+        $key = ApiCurrencyLayer::BASE_CURRENCY . $currency;
 
         if (!isset($rates[$key])) {
             throw new CurrencyConverterException(sprintf('The given currency "%s" is not found in rates.', $currency));

@@ -5,17 +5,24 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Exception\ApiCurrencyLayerException;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ApiCurrencyLayer
 {
+    /**
+     * In the free version of the API, exchange rates are shown only against the dollar
+     */
+    public const BASE_CURRENCY = 'USD';
     private const FORMAT_JSON = 1;
     private const ENDPOINT_LIVE = '/live';
 
+    private HttpClientInterface $httpClient;
     private string $domain;
     private string $accessKey;
 
-    public function __construct(string $domain, string $accessKey)
+    public function __construct(HttpClientInterface $httpClient, string $domain, string $accessKey)
     {
+        $this->httpClient = $httpClient;
         $this->domain = $domain;
         $this->accessKey = $accessKey;
     }
@@ -25,31 +32,34 @@ class ApiCurrencyLayer
      */
     public function getExchangeRateData(): array
     {
-        $params = http_build_query([
-            'access_key' => $this->accessKey,
-            'format' => self::FORMAT_JSON,
-        ]);
-        $url = sprintf('%s%s?%s', $this->domain, self::ENDPOINT_LIVE, $params);
+        try {
+            $url = $this->domain.self::ENDPOINT_LIVE;
+            $response = $this->httpClient->request('GET', $url, [
+                'query' => [
+                    'access_key' => $this->accessKey,
+                    'format' => self::FORMAT_JSON,
+                    'source' => self::BASE_CURRENCY,
+                ]
+            ]);
 
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, $url);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($curl);
-        curl_close($curl);
+            if (200 !== $response->getStatusCode()) {
+                throw new ApiCurrencyLayerException('Could not request rates from API.');
+            }
 
-        if (!$response) {
-            throw new ApiCurrencyLayerException('There is no response from API.');
+            $rates = json_decode($response->getContent(), true);
+            if (!$rates) {
+                throw new ApiCurrencyLayerException('Could not decode the API response');
+            }
+
+            if (!isset($rates['quotes'])) {
+                throw new ApiCurrencyLayerException('Invalid API response.');
+            }
+
+            return $rates['quotes'];
+        } catch (ApiCurrencyLayerException $exception) {
+            throw $exception;
+        } catch (\Throwable $throwable) {
+            throw new ApiCurrencyLayerException('Could not request from API.');
         }
-
-        $rates = json_decode($response, true);
-        if (!$rates) {
-            throw new ApiCurrencyLayerException('Could not decode the API response');
-        }
-
-        if (!isset($rates['quotes'])) {
-            throw new ApiCurrencyLayerException('Invalid API response.');
-        }
-
-        return $rates['quotes'];
     }
 }
