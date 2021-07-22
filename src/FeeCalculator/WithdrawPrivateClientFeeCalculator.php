@@ -73,42 +73,42 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     public function getFee(TransactionData $transaction): string
     {
         $transactions = $this->history->getSameWeekTransactions($transaction);
-        $defaultCurrencyAmount = $this->convertToDefaultCurrency(
-            $transaction->getCurrency(),
-            $transaction->getAmount()
-        );
-        $needFeeAmount = $defaultCurrencyAmount;
+        $defaultCurrencyAmount = $this->convertToDefaultCurrency($transaction->getCurrency(), $transaction->getAmount());
+        $feeAmount = $this->math->max($this->math->substract($defaultCurrencyAmount, (string) $this->feeMaxFreeAmount), '0.0');
 
         if (!empty($transactions)) {
-            if ($this->feeFreeOperationsCount > count($transactions)) {
-                $previousTotal = $this->getTransactionsTotalAmount($transactions);
-
-                if ($this->math->moreThan((string) $this->feeMaxFreeAmount, $previousTotal)) {
-                    $total = $this->math->add($previousTotal, $defaultCurrencyAmount);
-                    $needFeeAmount = $this->math->max(
-                        $this->math->substract($total, (string) $this->feeMaxFreeAmount),
-                        '0.0'
-                    );
-                }
-            }
-        } else {
-            $needFeeAmount = $this->math->max(
-                $this->math->substract($defaultCurrencyAmount, (string) $this->feeMaxFreeAmount),
-                '0.0'
-            );
+            $feeAmount = $this->getTransactionsFeeAmount($transactions, $defaultCurrencyAmount);
         }
 
         if ($this->defaultCurrency !== $transaction->getCurrency()) {
-            $needFeeAmount = $this->converter->convert(
-                $this->defaultCurrency,
-                $transaction->getCurrency(),
-                $needFeeAmount
-            );
+            $feeAmount = $this->converter->convert($this->defaultCurrency, $transaction->getCurrency(), $feeAmount);
         }
 
         $this->history->addTransaction($transaction);
 
-        return $this->math->percentage($needFeeAmount, (string) $this->feePercentage);
+        return $this->math->percentage($feeAmount, (string) $this->feePercentage);
+    }
+
+    /**
+     * @throws CouldNotConvertCurrencyException
+     */
+    private function getTransactionsFeeAmount(array $transactions, string $defaultCurrencyAmount): string
+    {
+        $feeAmount = $defaultCurrencyAmount;
+
+        if ($this->feeFreeOperationsCount > count($transactions)) {
+            $previousTotal = $this->getTransactionsTotalAmount($transactions);
+
+            if ($this->math->moreThan((string) $this->feeMaxFreeAmount, $previousTotal)) {
+                $total = $this->math->add($previousTotal, $defaultCurrencyAmount);
+                $feeAmount = $this->math->max(
+                    $this->math->substract($total, (string) $this->feeMaxFreeAmount),
+                    '0.0'
+                );
+            }
+        }
+
+        return $feeAmount;
     }
 
     /**
