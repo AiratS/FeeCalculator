@@ -18,6 +18,6 @@ try {
     $containerBuilder->compile();
     $app = $containerBuilder->get(Application::class);
     $app->run();
-} catch (Exception $e) {
-    echo $e->getMessage();
+} catch (Exception $exception) {
+    echo $exception->getMessage();
 }
