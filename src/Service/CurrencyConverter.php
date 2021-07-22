@@ -58,8 +58,8 @@ class CurrencyConverter
             $targetBaseRate = $this->getBaseRate($targetCurrency);
 
             return $this->math->divide($this->math->multiply($currentAmount, $targetBaseRate), $currentBaseRate);
-        } catch (Exception $e) {
-            throw new CouldNotConvertConvertCurrencyException('Could not convert currency', 0, $e);
+        } catch (Exception $exception) {
+            throw new CouldNotConvertConvertCurrencyException('Could not convert currency', 0, $exception);
         }
     }
 
@@ -92,8 +92,8 @@ class CurrencyConverter
             }
 
             return $this->rates;
-        } catch (Exception $e) {
-            throw new CurrencyConverterException('Could not request currency rates.', 0, $e);
+        } catch (Exception $exception) {
+            throw new CurrencyConverterException('Could not request currency rates.', 0, $exception);
         }
     }
 }

@@ -65,8 +65,8 @@ class CalculateFeeCommand extends Command
             foreach ($fees as $fee) {
                 $output->writeln($fee);
             }
-        } catch (Exception $e) {
-            $output->writeln(sprintf('<error>%s</error>', $e->getMessage()));
+        } catch (Exception $exception) {
+            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
             return Command::FAILURE;
         }
 
