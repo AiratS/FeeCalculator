@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use Exception;
-use App\Exception\CouldNotConvertConvertCurrencyException;
+use App\Exception\CouldNotConvertCurrencyException;
 use App\Exception\CurrencyConverterException;
 
 class CurrencyConverter
@@ -26,7 +26,7 @@ class CurrencyConverter
     }
 
     /**
-     * @throws CouldNotConvertConvertCurrencyException
+     * @throws CouldNotConvertCurrencyException
      */
     public function convert(string $currentCurrency, string $targetCurrency, string $currentAmount): string
     {
@@ -40,7 +40,7 @@ class CurrencyConverter
 
             return $this->math->divide($this->math->multiply($currentAmount, $targetBaseRate), $currentBaseRate);
         } catch (Exception $exception) {
-            throw new CouldNotConvertConvertCurrencyException('Could not convert currency', 0, $exception);
+            throw new CouldNotConvertCurrencyException('Could not convert currency', 0, $exception);
         }
     }
 
