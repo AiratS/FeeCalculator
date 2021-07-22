@@ -49,11 +49,11 @@ class DepositFeeCalculator implements FeeCalculatorInterface
     }
 
     /**
-     * @param TransactionData $transactionData
+     * @param TransactionData $transaction
      * @return string
      */
-    public function getFee(TransactionData $transactionData): string
+    public function getFee(TransactionData $transaction): string
     {
-        return $this->math->percentage($transactionData->getAmount(), (string) $this->feePercentage);
+        return $this->math->percentage($transaction->getAmount(), (string) $this->feePercentage);
     }
 }

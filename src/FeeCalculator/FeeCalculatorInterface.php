@@ -21,8 +21,8 @@ interface FeeCalculatorInterface
     public function supportsUserType(string $userType): bool;
 
     /**
-     * @param TransactionData $transactionData
+     * @param TransactionData $transaction
      * @return string
      */
-    public function getFee(TransactionData $transactionData): string;
+    public function getFee(TransactionData $transaction): string;
 }

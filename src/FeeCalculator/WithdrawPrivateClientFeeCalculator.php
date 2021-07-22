@@ -112,16 +112,16 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     }
 
     /**
-     * @param TransactionData $transactionData
+     * @param TransactionData $transaction
      * @return string
      * @throws CouldNotConvertConvertCurrencyException
      */
-    public function getFee(TransactionData $transactionData): string
+    public function getFee(TransactionData $transaction): string
     {
-        $transactions = $this->history->getSameWeekTransactions($transactionData);
+        $transactions = $this->history->getSameWeekTransactions($transaction);
         $defaultCurrencyAmount = $this->convertToDefaultCurrency(
-            $transactionData->getCurrency(),
-            $transactionData->getAmount()
+            $transaction->getCurrency(),
+            $transaction->getAmount()
         );
         $needFeeAmount = $defaultCurrencyAmount;
 
@@ -144,15 +144,15 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
             );
         }
 
-        if ($this->defaultCurrency !== $transactionData->getCurrency()) {
+        if ($this->defaultCurrency !== $transaction->getCurrency()) {
             $needFeeAmount = $this->converter->convert(
                 $this->defaultCurrency,
-                $transactionData->getCurrency(),
+                $transaction->getCurrency(),
                 $needFeeAmount
             );
         }
 
-        $this->history->addTransaction($transactionData);
+        $this->history->addTransaction($transaction);
 
         return $this->math->percentage($needFeeAmount, (string) $this->feePercentage);
     }
@@ -164,8 +164,8 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
      */
     private function getTransactionsTotalAmount(array $transactions): string
     {
-        return array_reduce($transactions, function (string $total, TransactionData $transactionData) {
-            $defaultCurrencyAmount = $this->convertToDefaultCurrency($transactionData->getCurrency(), $transactionData->getAmount());
+        return array_reduce($transactions, function (string $total, TransactionData $transaction) {
+            $defaultCurrencyAmount = $this->convertToDefaultCurrency($transaction->getCurrency(), $transaction->getAmount());
             return $this->math->add($total, $defaultCurrencyAmount);
         }, '0.0');
     }

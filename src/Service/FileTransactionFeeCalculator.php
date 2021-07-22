@@ -67,10 +67,10 @@ class FileTransactionFeeCalculator
         $format = $this->formatResolver->resolveFormat($filePath);
         $parser = $this->parsersContainer->getTransactionDataParser($format);
 
-        /** @var TransactionData $data */
-        foreach ($parser->parse($filePath) as $data) {
-            $calculator = $this->calculatorsContainer->getCalculator($data->getOperationType(), $data->getUserType());
-            yield $this->currencyRounder->round($calculator->getFee($data), $data->getCurrency());
+        /** @var TransactionData $transaction */
+        foreach ($parser->parse($filePath) as $transaction) {
+            $calculator = $this->calculatorsContainer->getCalculator($transaction->getOperationType(), $transaction->getUserType());
+            yield $this->currencyRounder->round($calculator->getFee($transaction), $transaction->getCurrency());
         }
     }
 }
