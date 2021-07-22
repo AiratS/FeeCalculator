@@ -13,27 +13,12 @@ class CurrencyConverter
     /**
      * In the free version of the API, exchange rates are shown only against the dollar
      */
-    const BASE_CURRENCY = 'USD';
+    public const BASE_CURRENCY = 'USD';
 
-    /**
-     * @var ApiCurrencyLayer
-     */
     private ApiCurrencyLayer $apiCurrencyLayer;
-
-    /**
-     * @var Math
-     */
     private Math $math;
-
-    /**
-     * @var array
-     */
     private array $rates = [];
 
-    /**
-     * @param ApiCurrencyLayer $apiCurrencyLayer
-     * @param Math $math
-     */
     public function __construct(ApiCurrencyLayer $apiCurrencyLayer, Math $math)
     {
         $this->apiCurrencyLayer = $apiCurrencyLayer;
@@ -41,10 +26,6 @@ class CurrencyConverter
     }
 
     /**
-     * @param string $currentCurrency
-     * @param string $targetCurrency
-     * @param string $currentAmount
-     * @return string
      * @throws CouldNotConvertConvertCurrencyException
      */
     public function convert(string $currentCurrency, string $targetCurrency, string $currentAmount): string
@@ -64,8 +45,6 @@ class CurrencyConverter
     }
 
     /**
-     * @param string $currency
-     * @return string
      * @throws CurrencyConverterException
      */
     private function getBaseRate(string $currency): string
@@ -81,7 +60,6 @@ class CurrencyConverter
     }
 
     /**
-     * @return array
      * @throws CurrencyConverterException
      */
     private function getRates(): array

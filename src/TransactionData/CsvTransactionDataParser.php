@@ -11,31 +11,19 @@ use App\Exception\CouldNotOpenFileException;
 
 class CsvTransactionDataParser implements TransactionDataParserInterface
 {
-    /**
-     * @var CsvTransactionDataValidator
-     */
     private CsvTransactionDataValidator $validator;
 
-    /**
-     * @param CsvTransactionDataValidator $validator
-     */
     public function __construct(CsvTransactionDataValidator $validator)
     {
         $this->validator = $validator;
     }
 
-    /**
-     * @param string $format
-     * @return bool
-     */
     public function supportsFormat(string $format): bool
     {
         return 'csv' === $format;
     }
 
     /**
-     * @param string $filePath
-     * @return iterable
      * @throws Exception
      * @throws CouldNotOpenFileException
      */

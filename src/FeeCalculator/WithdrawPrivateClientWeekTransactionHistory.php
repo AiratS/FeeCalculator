@@ -9,15 +9,8 @@ use App\TransactionData\TransactionData;
 
 class WithdrawPrivateClientWeekTransactionHistory
 {
-    /**
-     * @var array
-     */
     public array $transactions = [];
 
-    /**
-     * @param TransactionData $transaction
-     * @return array
-     */
     public function getSameWeekTransactions(TransactionData $transaction): array
     {
         return $this->hasSameWeekTransactions($transaction)
@@ -25,9 +18,6 @@ class WithdrawPrivateClientWeekTransactionHistory
             : [];
     }
 
-    /**
-     * @param TransactionData $transaction
-     */
     public function addTransaction(TransactionData $transaction)
     {
         $userId = $transaction->getUserId();
@@ -43,10 +33,6 @@ class WithdrawPrivateClientWeekTransactionHistory
         $this->transactions[$userId][] = $transaction;
     }
 
-    /**
-     * @param TransactionData $transaction
-     * @return bool
-     */
     public function hasSameWeekTransactions(TransactionData $transaction): bool
     {
         $userId = $transaction->getUserId();
@@ -60,11 +46,6 @@ class WithdrawPrivateClientWeekTransactionHistory
         return $this->isSameWeek($transaction->getDate(), $lastTransaction->getDate());
     }
 
-    /**
-     * @param DateTime $dateTime1
-     * @param DateTime $dateTime2
-     * @return bool
-     */
     private function isSameWeek(DateTime $dateTime1, DateTime $dateTime2): bool
     {
         $weekStart = clone $dateTime1;

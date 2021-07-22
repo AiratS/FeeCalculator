@@ -8,22 +8,14 @@ use App\Exception\UnsupportedFormatException;
 
 class TransactionDataParsersContainer
 {
-    /**
-     * @var iterable
-     */
     private iterable $transactionDataParsers;
 
-    /**
-     * @param iterable $transactionDataParsers
-     */
     public function __construct(iterable $transactionDataParsers)
     {
         $this->transactionDataParsers = $transactionDataParsers;
     }
 
     /**
-     * @param string $format
-     * @return TransactionDataParserInterface
      * @throws UnsupportedFormatException
      */
     public function getTransactionDataParser(string $format): TransactionDataParserInterface

@@ -13,21 +13,11 @@ use App\Service\FileTransactionFeeCalculator;
 
 class CalculateFeeCommand extends Command
 {
-    const ARG_FILE_PATH = 'file-path';
+    private const ARG_FILE_PATH = 'file-path';
 
-    /**
-     * @var string
-     */
     protected static $defaultName = 'app:calculate-fee';
-
-    /**
-     * @var FileTransactionFeeCalculator
-     */
     private FileTransactionFeeCalculator $feeCalculator;
 
-    /**
-     * @param FileTransactionFeeCalculator $feeCalculator
-     */
     public function __construct(FileTransactionFeeCalculator $feeCalculator)
     {
         $this->feeCalculator = $feeCalculator;
@@ -46,11 +36,6 @@ class CalculateFeeCommand extends Command
         $this->addArgument(self::ARG_FILE_PATH, InputArgument::REQUIRED, 'Path to csv file');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     * @return int
-     */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $filePath = $input->getArgument(self::ARG_FILE_PATH);

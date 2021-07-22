@@ -6,12 +6,9 @@ namespace App\Enum;
 
 abstract class TransactionOperationType extends AbstractEnum
 {
-    const DEPOSIT = 'deposit';
-    const WITHDRAW = 'withdraw';
+    public const DEPOSIT = 'deposit';
+    public const WITHDRAW = 'withdraw';
 
-    /**
-     * @return array
-     */
     public static function getItems(): array
     {
         return [

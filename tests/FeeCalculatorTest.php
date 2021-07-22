@@ -16,14 +16,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
 final class FeeCalculatorTest extends TestCase
 {
-    /**
-     * @var ContainerBuilder
-     */
     private ContainerBuilder $container;
-
-    /**
-     * @var FeeCalculatorsContainer
-     */
     private FeeCalculatorsContainer $calculatorsContainer;
 
     /**
@@ -41,9 +34,6 @@ final class FeeCalculatorTest extends TestCase
         }
     }
 
-    /**
-     * @return iterable
-     */
     public function getFeeCalculationTestData(): iterable
     {
         $transaction1 = (new TransactionData())
@@ -165,7 +155,6 @@ final class FeeCalculatorTest extends TestCase
     }
 
     /**
-     * @return FeeCalculatorsContainer
      * @throws Exception
      */
     private function getCalculatorsContainer(): FeeCalculatorsContainer
@@ -183,8 +172,6 @@ final class FeeCalculatorTest extends TestCase
     }
 
     /**
-     * @param ContainerBuilder $container
-     * @return WithdrawPrivateClientFeeCalculator
      * @throws Exception
      */
     private function getWithdrawPrivateClientCalculator(ContainerBuilder $container): WithdrawPrivateClientFeeCalculator
@@ -196,9 +183,6 @@ final class FeeCalculatorTest extends TestCase
         return $withdrawPrivateClientCalculator;
     }
 
-    /**
-     * @return object
-     */
     private function createCurrencyConverterMock(): object
     {
         $stub = $this->createMock(CurrencyConverter::class);
@@ -221,9 +205,6 @@ final class FeeCalculatorTest extends TestCase
     }
 
     /**
-     * @param string $amount
-     * @param string $rate
-     * @return string
      * @throws Exception
      */
     private function currencyConvertToEuro(string $amount, string $rate): string
@@ -235,9 +216,6 @@ final class FeeCalculatorTest extends TestCase
     }
 
     /**
-     * @param string $amount
-     * @param string $rate
-     * @return string
      * @throws Exception
      */
     private function currencyConvertFromEuroToGiven(string $amount, string $rate): string
@@ -249,7 +227,6 @@ final class FeeCalculatorTest extends TestCase
     }
 
     /**
-     * @return ContainerBuilder
      * @throws Exception
      */
     private function getContainer(): ContainerBuilder

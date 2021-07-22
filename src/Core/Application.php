@@ -8,9 +8,6 @@ use Symfony\Component\Console\Application as BaseApplication;
 
 class Application extends BaseApplication
 {
-    /**
-     * @param iterable $commands
-     */
     public function __construct(iterable $commands = [])
     {
         foreach ($commands as $command) {

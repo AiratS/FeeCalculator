@@ -6,12 +6,9 @@ namespace App\Enum;
 
 abstract class TransactionUserType extends AbstractEnum
 {
-    const PRIVATE = 'private';
-    const BUSINESS = 'business';
+    public const PRIVATE = 'private';
+    public const BUSINESS = 'business';
 
-    /**
-     * @return array
-     */
     public static function getItems(): array
     {
         return [

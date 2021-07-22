@@ -12,38 +12,12 @@ use App\TransactionData\TransactionDataParsersContainer;
 
 class FileTransactionFeeCalculator
 {
-    /**
-     * @var int
-     */
     private int $feeScale;
-
-    /**
-     * @var TransactionDataParsersContainer
-     */
     private TransactionDataParsersContainer $parsersContainer;
-
-    /**
-     * @var FileFormatResolver
-     */
     private FileFormatResolver $formatResolver;
-
-    /**
-     * @var FeeCalculatorsContainer
-     */
     private FeeCalculatorsContainer $calculatorsContainer;
-
-    /**
-     * @var CurrencyRounder
-     */
     private CurrencyRounder $currencyRounder;
 
-    /**
-     * @param int $feeScale
-     * @param TransactionDataParsersContainer $parsersContainer
-     * @param FileFormatResolver $formatResolver
-     * @param FeeCalculatorsContainer $calculatorsContainer
-     * @param CurrencyRounder $currencyRounder
-     */
     public function __construct(
         int $feeScale,
         TransactionDataParsersContainer $parsersContainer,

@@ -8,23 +8,12 @@ use App\Exception\ApiCurrencyLayerException;
 
 class ApiCurrencyLayer
 {
-    const FORMAT_JSON = 1;
-    const ENDPOINT_LIVE = '/live';
+    private const FORMAT_JSON = 1;
+    private const ENDPOINT_LIVE = '/live';
 
-    /**
-     * @var string
-     */
     private string $domain;
-
-    /**
-     * @var string
-     */
     private string $accessKey;
 
-    /**
-     * @param string $domain
-     * @param string $accessKey
-     */
     public function __construct(string $domain, string $accessKey)
     {
         $this->domain = $domain;
@@ -32,7 +21,6 @@ class ApiCurrencyLayer
     }
 
     /**
-     * @return array
      * @throws ApiCurrencyLayerException
      */
     public function getExchangeRateData(): array

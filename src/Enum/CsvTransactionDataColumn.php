@@ -6,16 +6,13 @@ namespace App\Enum;
 
 abstract class CsvTransactionDataColumn extends AbstractEnum
 {
-    const DATE = 0;
-    const USER_ID = 1;
-    const USER_TYPE = 2;
-    const OPERATION_TYPE = 3;
-    const AMOUNT = 4;
-    const CURRENCY = 5;
+    public const DATE = 0;
+    public const USER_ID = 1;
+    public const USER_TYPE = 2;
+    public const OPERATION_TYPE = 3;
+    public const AMOUNT = 4;
+    public const CURRENCY = 5;
 
-    /**
-     * @return array
-     */
     public static function getItems(): array
     {
         return [

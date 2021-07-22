@@ -7,7 +7,6 @@ namespace App\Service;
 class SupportedCurrency
 {
     private array $supportedCurrencies;
-
     private int $defaultScale;
 
     public function __construct(array $supportedCurrencies, int $defaultScale)

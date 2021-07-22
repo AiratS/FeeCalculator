@@ -8,28 +8,15 @@ use App\Exception\FeeCalculatorIsNotFoundException;
 
 class FeeCalculatorsContainer
 {
-    /**
-     * @var iterable
-     */
     public iterable $calculators;
-
-    /**
-     * @var array
-     */
     private array $cachedCalculators = [];
 
-    /**
-     * @param iterable $calculators
-     */
     public function __construct(iterable $calculators = [])
     {
         $this->calculators = $calculators;
     }
 
     /**
-     * @param string $operationType
-     * @param string $userType
-     * @return FeeCalculatorInterface
      * @throws FeeCalculatorIsNotFoundException
      */
     public function getCalculator(string $operationType, string $userType): FeeCalculatorInterface

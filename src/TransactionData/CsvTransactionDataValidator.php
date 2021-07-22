@@ -13,21 +13,14 @@ use App\Service\SupportedCurrency;
 
 class CsvTransactionDataValidator
 {
-    /**
-     * @var SupportedCurrency
-     */
     private SupportedCurrency $supportedCurrency;
 
-    /**
-     * @param SupportedCurrency $supportedCurrency
-     */
     public function __construct(SupportedCurrency $supportedCurrency)
     {
         $this->supportedCurrency = $supportedCurrency;
     }
 
     /**
-     * @param array $rowData
      * @throws InvalidParameterException
      * @throws NotEnoughParametersException
      */
