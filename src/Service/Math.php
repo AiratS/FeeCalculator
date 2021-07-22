@@ -109,9 +109,7 @@ class Math
      */
     public function percentage(string $total, string $percentage): string
     {
-        $num2 = (float) $percentage / 100;
-
-        return $this->multiply($total, (string) $num2);
+        return $this->multiply($total, $this->divide($percentage, '100'));
     }
 
     /**
