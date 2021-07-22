@@ -9,20 +9,21 @@ use App\Enum\TransactionOperationType;
 use App\Enum\TransactionUserType;
 use App\Exception\InvalidParameterException;
 use App\Exception\NotEnoughParametersException;
+use App\Service\SupportedCurrency;
 
 class CsvTransactionDataValidator
 {
     /**
-     * @var
+     * @var SupportedCurrency
      */
-    private array $supportedCurrencies;
+    private SupportedCurrency $supportedCurrency;
 
     /**
-     * @param array $supportedCurrencies
+     * @param SupportedCurrency $supportedCurrency
      */
-    public function __construct(array $supportedCurrencies)
+    public function __construct(SupportedCurrency $supportedCurrency)
     {
-        $this->supportedCurrencies = $supportedCurrencies;
+        $this->supportedCurrency = $supportedCurrency;
     }
 
     /**
@@ -56,7 +57,7 @@ class CsvTransactionDataValidator
             throw new InvalidParameterException('The given money amount is invalid.');
         }
 
-        if (!in_array($rowData[CsvTransactionDataColumn::CURRENCY], $this->supportedCurrencies)) {
+        if (!$this->supportedCurrency->isSupported($rowData[CsvTransactionDataColumn::CURRENCY])) {
             throw new InvalidParameterException('The given currency is not supported by application.');
         }
     }

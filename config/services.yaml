@@ -1,10 +1,14 @@
 # config/services.yaml
 parameters:
   currency.default: 'EUR'
+  currency.default_scale: 2
   currency.supported:
-    - 'EUR'
-    - 'USD'
-    - 'JPY'
+    eur:
+      scale: 2
+    usd:
+      scale: 2
+    jpy:
+      scale: 0
 
   fee_scale: 2
   fee_percentage.deposit: 0.03
@@ -51,11 +55,12 @@ services:
       - '@app.transaction_data_parsers_container'
       - '@app.file_format_resolver'
       - '@app.fee_calculators_container'
+      - '@app.currency_rounder'
 
   app.csv_transaction_data_validator:
     class: App\TransactionData\CsvTransactionDataValidator
     arguments:
-      - '%currency.supported%'
+      - '@app.supported_currency'
 
   app.csv_transaction_data_parser:
     class: App\TransactionData\CsvTransactionDataParser
@@ -115,3 +120,14 @@ services:
     public: true
     arguments:
       - !tagged fee_calculator
+
+  app.supported_currency:
+    class: App\Service\SupportedCurrency
+    arguments:
+      - '%currency.supported%'
+      - '%currency.default_scale%'
+
+  app.currency_rounder:
+    class: App\Service\CurrencyRounder
+    arguments:
+      - '@app.supported_currency'

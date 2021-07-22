@@ -33,26 +33,32 @@ class FileTransactionFeeCalculator
     private FeeCalculatorsContainer $calculatorsContainer;
 
     /**
+     * @var CurrencyRounder
+     */
+    private CurrencyRounder $currencyRounder;
+
+    /**
      * @param int $feeScale
      * @param TransactionDataParsersContainer $parsersContainer
      * @param FileFormatResolver $formatResolver
      * @param FeeCalculatorsContainer $calculatorsContainer
+     * @param CurrencyRounder $currencyRounder
      */
     public function __construct(
         int $feeScale,
         TransactionDataParsersContainer $parsersContainer,
         FileFormatResolver $formatResolver,
-        FeeCalculatorsContainer $calculatorsContainer
+        FeeCalculatorsContainer $calculatorsContainer,
+        CurrencyRounder $currencyRounder
     ) {
         $this->feeScale = $feeScale;
         $this->parsersContainer = $parsersContainer;
         $this->formatResolver = $formatResolver;
         $this->calculatorsContainer = $calculatorsContainer;
+        $this->currencyRounder = $currencyRounder;
     }
 
     /**
-     * @param string $filePath
-     * @return iterable
      * @throws UnsupportedFormatException
      * @throws FeeCalculatorIsNotFoundException
      */
@@ -64,7 +70,7 @@ class FileTransactionFeeCalculator
         /** @var TransactionData $data */
         foreach ($parser->parse($filePath) as $data) {
             $calculator = $this->calculatorsContainer->getCalculator($data->getOperationType(), $data->getUserType());
-            yield $calculator->getFee($data);
+            yield $this->currencyRounder->round($calculator->getFee($data), $data->getCurrency());
         }
     }
 }
