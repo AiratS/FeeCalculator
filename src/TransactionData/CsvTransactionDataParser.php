@@ -11,6 +11,8 @@ use App\Exception\CouldNotOpenFileException;
 
 class CsvTransactionDataParser implements TransactionDataParserInterface
 {
+    public const FORMAT_CSV = 'csv';
+
     private CsvTransactionDataValidator $validator;
 
     public function __construct(CsvTransactionDataValidator $validator)
@@ -20,7 +22,7 @@ class CsvTransactionDataParser implements TransactionDataParserInterface
 
     public function supportsFormat(string $format): bool
     {
-        return 'csv' === $format;
+        return self::FORMAT_CSV === $format;
     }
 
     /**
