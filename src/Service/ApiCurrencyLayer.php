@@ -49,12 +49,12 @@ class ApiCurrencyLayer
         $response = curl_exec($curl);
         curl_close($curl);
 
-        if (false === $response) {
+        if (!$response) {
             throw new ApiCurrencyLayerException('There is no response from API.');
         }
 
         $rates = json_decode($response, true);
-        if (null === $rates) {
+        if (!$rates) {
             throw new ApiCurrencyLayerException('Could not decode the API response');
         }
 

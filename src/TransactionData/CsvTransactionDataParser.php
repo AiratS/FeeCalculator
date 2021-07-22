@@ -42,7 +42,7 @@ class CsvTransactionDataParser implements TransactionDataParserInterface
     public function parse(string $filePath): iterable
     {
         $resource = fopen($filePath, 'r');
-        if (false === $resource) {
+        if (!$resource) {
             throw new CouldNotOpenFileException();
         }
 
