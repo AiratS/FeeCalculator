@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\FeeCalculator;
 
 use App\Enum\TransactionOperationType;
+use App\Enum\TransactionUserType;
 use App\Service\Math;
 use App\TransactionData\TransactionData;
 
@@ -26,7 +27,7 @@ class DepositFeeCalculator implements FeeCalculatorInterface
 
     public function supportsUserType(string $userType): bool
     {
-        return true;
+        return in_array($userType, TransactionUserType::getItems());
     }
 
     public function getFee(TransactionData $transaction): string
