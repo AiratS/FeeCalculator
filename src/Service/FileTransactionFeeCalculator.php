@@ -12,20 +12,17 @@ use App\TransactionData\TransactionDataParsersContainer;
 
 class FileTransactionFeeCalculator
 {
-    private int $feeScale;
     private TransactionDataParsersContainer $parsersContainer;
     private FileFormatResolver $formatResolver;
     private FeeCalculatorsContainer $calculatorsContainer;
     private CurrencyRounder $currencyRounder;
 
     public function __construct(
-        int $feeScale,
         TransactionDataParsersContainer $parsersContainer,
         FileFormatResolver $formatResolver,
         FeeCalculatorsContainer $calculatorsContainer,
         CurrencyRounder $currencyRounder
     ) {
-        $this->feeScale = $feeScale;
         $this->parsersContainer = $parsersContainer;
         $this->formatResolver = $formatResolver;
         $this->calculatorsContainer = $calculatorsContainer;

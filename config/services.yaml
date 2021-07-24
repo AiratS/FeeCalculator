@@ -10,7 +10,6 @@ parameters:
     jpy:
       scale: 0
 
-  fee_scale: 2
   fee_percentage.deposit: 0.03
   fee_percentage.withdraw_private_client: 0.3
   fee_percentage.withdraw_business_client: 0.5
@@ -51,7 +50,6 @@ services:
   app.file_transaction_fee_calculator:
     class: App\Service\FileTransactionFeeCalculator
     arguments:
-      - '%fee_scale%'
       - '@app.transaction_data_parsers_container'
       - '@app.file_format_resolver'
       - '@app.fee_calculators_container'
