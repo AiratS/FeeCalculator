@@ -11,8 +11,7 @@
 *Replace the numbers assigned to `USER_ID` and `GROUP_ID`  to `UID` and `GID` of your host machine current user.*
 
 Application installation:
-- Run  `docker-compose build` in `<application-root>/docker` directory to build containers.
-<br/>
+- Run  `docker-compose build` in `<application-root>/docker` directory to build containers.<br/>
 - Run `docker-compose run app composer install` to install php dependencies.
 
 ### How to run the application
