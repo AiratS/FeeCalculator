@@ -21,7 +21,7 @@ class FeeCalculationTest extends AbstractAppTest
      */
     public static function setUpBeforeClass(): void
     {
-        parent::setContainer();
+        parent::setUpBeforeClass();
         self::setCalculatorsContainer();
     }
 
