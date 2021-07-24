@@ -4,37 +4,46 @@ declare(strict_types=1);
 
 use App\Enum\TransactionOperationType;
 use App\Enum\TransactionUserType;
+use App\Exception\FeeCalculatorIsNotFoundException;
 use App\FeeCalculator\FeeCalculatorsContainer;
 use App\FeeCalculator\WithdrawPrivateClientFeeCalculator;
 use App\Service\CurrencyConverter;
+use App\Service\CurrencyRounder;
 use App\Service\Math;
 use App\TransactionData\TransactionData;
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 
-final class FeeCalculatorTest extends TestCase
+class FeeCalculationTest extends AbstractAppTest
 {
-    private ContainerBuilder $container;
-    private FeeCalculatorsContainer $calculatorsContainer;
+    protected static FeeCalculatorsContainer $calculatorsContainer;
 
     /**
      * @throws Exception
      */
-    public function testFeeCalculation()
+    public static function setUpBeforeClass(): void
     {
-        $transactions = $this->getFeeCalculationTestData();
-
-        foreach ($transactions as $data) {
-            $transaction = $data['transaction'];
-            $calculators = $this->getCalculatorsContainer();
-            $calculator = $calculators->getCalculator($transaction->getOperationType(), $transaction->getUserType());
-            $this->assertEquals($data['fee'], $calculator->getFee($transaction));
-        }
+        parent::setContainer();
+        self::setCalculatorsContainer();
     }
 
-    public function getFeeCalculationTestData(): iterable
+    /**
+     * @dataProvider feeCalculationData
+     *
+     * @throws FeeCalculatorIsNotFoundException
+     * @throws Exception
+     */
+    public function testFeeCalculation(TransactionData $transaction, string $targetFee)
+    {
+        $this->setCurrencyConverterMockService();
+
+        $rounder = $this->getCurrencyRounder();
+        $calculators = self::getCalculatorsContainer();
+        $calculator = $calculators->getCalculator($transaction->getOperationType(), $transaction->getUserType());
+        $calculatedFee = $calculator->getFee($transaction);
+
+        $this->assertEquals($targetFee, $rounder->round($calculatedFee, $transaction->getCurrency()));
+    }
+
+    public function feeCalculationData(): iterable
     {
         $transaction1 = (new TransactionData())
             ->setDate(new DateTime('2014-12-31'))
@@ -157,33 +166,14 @@ final class FeeCalculatorTest extends TestCase
     /**
      * @throws Exception
      */
-    private function getCalculatorsContainer(): FeeCalculatorsContainer
-    {
-        if (!isset($this->calculatorsContainer)) {
-            $container = $this->getContainer();
-            $this->calculatorsContainer = new FeeCalculatorsContainer([
-                $container->get('app.deposit_fee_calculator'),
-                $this->getWithdrawPrivateClientCalculator($container),
-                $container->get('app.withdraw_business_client_fee_calculator'),
-            ]);
-        }
-
-        return $this->calculatorsContainer;
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function getWithdrawPrivateClientCalculator(ContainerBuilder $container): WithdrawPrivateClientFeeCalculator
+    protected function setCurrencyConverterMockService()
     {
         /** @var WithdrawPrivateClientFeeCalculator $withdrawPrivateClientCalculator */
-        $withdrawPrivateClientCalculator = $container->get('app.withdraw_private_client_fee_calculator');
-        $withdrawPrivateClientCalculator->setCurrencyConverter($this->createCurrencyConverterMock());
-
-        return $withdrawPrivateClientCalculator;
+        $withdrawPrivateClientCalculator = self::getContainer()->get('app.withdraw_private_client_fee_calculator');
+        $withdrawPrivateClientCalculator->setCurrencyConverter($this->createCurrencyConverterMockService());
     }
 
-    private function createCurrencyConverterMock(): object
+    protected function createCurrencyConverterMockService(): object
     {
         $stub = $this->createMock(CurrencyConverter::class);
         $stub->method('convert')
@@ -207,36 +197,50 @@ final class FeeCalculatorTest extends TestCase
     /**
      * @throws Exception
      */
-    private function currencyConvertToEuro(string $amount, string $rate): string
+    protected function currencyConvertToEuro(string $amount, string $rate): string
     {
-        /** @var Math $math */
-        $math = $this->getContainer()->get('app.math');
-
-        return $math->divide($amount, $rate);
+        return $this->getMathService()->divide($amount, $rate);
     }
 
     /**
      * @throws Exception
      */
-    private function currencyConvertFromEuroToGiven(string $amount, string $rate): string
+    protected function currencyConvertFromEuroToGiven(string $amount, string $rate): string
     {
-        /** @var Math $math */
-        $math = $this->getContainer()->get('app.math');
-
-        return $math->multiply($amount, $rate);
+        return $this->getMathService()->multiply($amount, $rate);
     }
 
     /**
      * @throws Exception
      */
-    private function getContainer(): ContainerBuilder
+    protected function getMathService(): Math
     {
-        if (!isset($this->container)) {
-            $this->container = new ContainerBuilder();
-            $loader = new YamlFileLoader($this->container, new FileLocator(__DIR__));
-            $loader->load('../config/services.yaml');
-        }
+        return self::getContainer()->get('app.math');;
+    }
 
-        return $this->container;
+    /**
+     * @throws Exception
+     */
+    protected static function setCalculatorsContainer()
+    {
+        $container = self::getContainer();
+        self::$calculatorsContainer = new FeeCalculatorsContainer([
+            $container->get('app.deposit_fee_calculator'),
+            $container->get('app.withdraw_private_client_fee_calculator'),
+            $container->get('app.withdraw_business_client_fee_calculator'),
+        ]);
+    }
+
+    protected static function getCalculatorsContainer(): FeeCalculatorsContainer
+    {
+        return self::$calculatorsContainer;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function getCurrencyRounder(): CurrencyRounder
+    {
+        return self::getContainer()->get('app.currency_rounder');
     }
 }
