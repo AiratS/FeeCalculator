@@ -68,11 +68,19 @@ class Math
 
     public function round(string $num, int $precision = 0): string
     {
-        if (($pos = strpos($num, '.')) && (strlen($num) - $pos - 1) > $precision) {
-            $zeros = str_repeat('0', $precision);
-            return bcadd($num, "0.{$zeros}5", $precision);
-        } else {
+        $position = strpos($num, '.');
+        if (false === $position) {
             return $num;
         }
+
+        $length = strlen($num);
+        $fractionLength = $length - $position - 1;
+        if ($fractionLength <= $precision) {
+            return $num;
+        }
+
+        $zeros = str_repeat('0', $precision);
+
+        return bcadd($num, "0.{$zeros}5", $precision);
     }
 }
