@@ -20,7 +20,7 @@ parameters:
   api.currency_layer.domain: 'http://api.currencylayer.com'
   api.currency_layer.access_key: 'cce4d0539a291173c629e6a164e6e3da'
 
-  math.calculation_scale: 5
+  math.calculation_scale: 15
 
 services:
   _defaults:
@@ -132,6 +132,7 @@ services:
     class: App\Service\CurrencyRounder
     arguments:
       - '@app.supported_currency'
+      - '@app.math'
 
   vendor.http_client:
     class: Symfony\Component\HttpClient\CurlHttpClient

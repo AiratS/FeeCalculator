@@ -65,4 +65,14 @@ class Math
     {
         return $this->moreThan($num1, $num2) ? $num1 : $num2;
     }
+
+    public function round(string $num, int $precision = 0): string
+    {
+        if (($pos = strpos($num, '.')) && (strlen($num) - $pos - 1) > $precision) {
+            $zeros = str_repeat('0', $precision);
+            return bcadd($num, "0.{$zeros}5", $precision);
+        } else {
+            return $num;
+        }
+    }
 }
