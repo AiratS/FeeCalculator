@@ -30,14 +30,7 @@ class FeeCalculatorsContainerInvalidTest extends AbstractFeeCalculatorsTest
             'operationType' => TransactionOperationType::DEPOSIT,
             'userType' => self::TRANSACTION_USER_TYPE_INVALID,
         ];
-        yield [
-            'operationType' => TransactionOperationType::DEPOSIT,
-            'userType' => self::TRANSACTION_USER_TYPE_INVALID,
-        ];
-        yield [
-            'operationType' => TransactionOperationType::WITHDRAW,
-            'userType' => self::TRANSACTION_USER_TYPE_INVALID,
-        ];
+
         yield [
             'operationType' => TransactionOperationType::WITHDRAW,
             'userType' => self::TRANSACTION_USER_TYPE_INVALID,
@@ -47,6 +40,7 @@ class FeeCalculatorsContainerInvalidTest extends AbstractFeeCalculatorsTest
             'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
             'userType' => TransactionUserType::PRIVATE,
         ];
+
         yield [
             'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
             'userType' => TransactionUserType::BUSINESS,
