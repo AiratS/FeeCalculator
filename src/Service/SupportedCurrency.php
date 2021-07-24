@@ -11,20 +11,13 @@ class SupportedCurrency
 
     public function __construct(array $supportedCurrencies, int $defaultScale)
     {
-        $this->supportedCurrencies = $supportedCurrencies;
+        $this->supportedCurrencies = $this->changeCurrencyNamesToLowercase($supportedCurrencies);
         $this->defaultScale = $defaultScale;
-    }
-
-    public function getNames(): array
-    {
-        return array_map(function (string $currency) {
-            return strtoupper($currency);
-        }, array_keys($this->supportedCurrencies));
     }
 
     public function isSupported(string $currency): bool
     {
-        return in_array(strtoupper($currency), $this->getNames());
+        return in_array(strtolower($currency), $this->getNames());
     }
 
     public function getScale(string $currency): int
@@ -35,5 +28,15 @@ class SupportedCurrency
         }
 
         return $this->defaultScale;
+    }
+
+    public function getNames(): array
+    {
+        return array_keys($this->supportedCurrencies);
+    }
+
+    private function changeCurrencyNamesToLowercase(array $supportedCurrencies): array
+    {
+        return array_change_key_case($supportedCurrencies, CASE_LOWER);
     }
 }
