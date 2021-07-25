@@ -66,7 +66,7 @@ class Math
         return $this->moreThan($num1, $num2) ? $num1 : $num2;
     }
 
-    public function round(string $num, int $precision = 0): string
+    public function ceil(string $num, int $precision = 0): string
     {
         $position = strpos($num, '.');
         if (false === $position) {
@@ -79,8 +79,18 @@ class Math
             return $num;
         }
 
-        $zeros = str_repeat('0', $precision);
+        $fraction = substr($num, $position + 1);
+        $fractionWithPrecision = substr($fraction, 0, $precision);
+        $afterFractionWithPrecision = substr($fraction, $precision, 1);
 
-        return bcadd($num, "0.{$zeros}5", $precision);
+        if ('0' !== $afterFractionWithPrecision) {
+            $fractionWithPrecision = bcadd($fractionWithPrecision, '1', $precision);
+        }
+
+        $integerPart = substr($num, 0, $position);
+        $divider = bcpow('10', (string) $precision);
+        $fractionPart = bcdiv($fractionWithPrecision, $divider, $precision);
+
+        return bcadd($integerPart, $fractionPart, $precision);
     }
 }

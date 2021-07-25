@@ -15,8 +15,8 @@ class CurrencyRounder
         $this->math = $math;
     }
 
-    public function round(string $amount, string $currency): string
+    public function ceil(string $amount, string $currency): string
     {
-        return $this->math->round($amount, $this->supportedCurrency->getScale($currency));
+        return $this->math->ceil($amount, $this->supportedCurrency->getScale($currency));
     }
 }

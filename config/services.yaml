@@ -19,7 +19,7 @@ parameters:
   api.currency_layer.domain: 'http://api.currencylayer.com'
   api.currency_layer.access_key: 'cce4d0539a291173c629e6a164e6e3da'
 
-  math.calculation_scale: 15
+  math.calculation_scale: 6
 
 services:
   _defaults:

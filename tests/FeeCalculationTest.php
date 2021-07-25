@@ -39,7 +39,7 @@ class FeeCalculationTest extends AbstractAppTest
         $calculator = $calculators->getCalculator($transaction->getOperationType(), $transaction->getUserType());
         $calculatedFee = $calculator->getFee($transaction);
 
-        $this->assertEquals($targetFee, $rounder->round($calculatedFee, $transaction->getCurrency()));
+        $this->assertEquals($targetFee, $rounder->ceil($calculatedFee, $transaction->getCurrency()));
     }
 
     public function feeCalculationData(): iterable
