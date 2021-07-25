@@ -36,7 +36,7 @@ class CsvTransactionDataParser implements TransactionDataParserInterface
             throw new CouldNotOpenFileException();
         }
 
-        while (($rowData = fgetcsv($resource)) !== false) {
+        while (($rowData = fgetcsv($resource))) {
             $this->validator->validate($rowData);
 
             yield (new TransactionData())

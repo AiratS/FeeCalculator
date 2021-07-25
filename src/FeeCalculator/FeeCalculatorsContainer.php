@@ -8,7 +8,7 @@ use App\Exception\FeeCalculatorIsNotFoundException;
 
 class FeeCalculatorsContainer
 {
-    public iterable $calculators;
+    private iterable $calculators;
     private array $cachedCalculators = [];
 
     public function __construct(iterable $calculators = [])

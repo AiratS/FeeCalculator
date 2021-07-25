@@ -9,7 +9,7 @@ use App\TransactionData\TransactionData;
 
 class WithdrawPrivateClientWeekTransactionHistory
 {
-    public array $transactions = [];
+    private array $transactions = [];
 
     public function getSameWeekTransactions(TransactionData $transaction): array
     {
