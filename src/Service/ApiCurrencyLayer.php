@@ -33,7 +33,7 @@ class ApiCurrencyLayer
     public function getExchangeRateData(): array
     {
         try {
-            $url = $this->domain.self::ENDPOINT_LIVE;
+            $url = $this->domain . self::ENDPOINT_LIVE;
             $response = $this->httpClient->request('GET', $url, [
                 'query' => [
                     'access_key' => $this->accessKey,
