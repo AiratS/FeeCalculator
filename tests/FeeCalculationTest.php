@@ -27,7 +27,6 @@ class FeeCalculationTest extends AbstractAppTest
 
     /**
      * @dataProvider feeCalculationData
-     *
      * @throws FeeCalculatorIsNotFoundException
      * @throws Exception
      */
