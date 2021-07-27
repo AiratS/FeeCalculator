@@ -11,10 +11,10 @@ use App\TransactionData\TransactionData;
 
 class DepositFeeCalculator implements FeeCalculatorInterface
 {
-    private float $feePercentage;
+    private string $feePercentage;
     private Math $math;
 
-    public function __construct(float $feePercentage, Math $math)
+    public function __construct(string $feePercentage, Math $math)
     {
         $this->feePercentage = $feePercentage;
         $this->math = $math;
@@ -32,6 +32,6 @@ class DepositFeeCalculator implements FeeCalculatorInterface
 
     public function getFee(TransactionData $transaction): string
     {
-        return $this->math->percentage($transaction->getAmount(), (string) $this->feePercentage);
+        return $this->math->percentage($transaction->getAmount(), $this->feePercentage);
     }
 }

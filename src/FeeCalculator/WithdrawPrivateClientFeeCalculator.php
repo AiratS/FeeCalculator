@@ -13,8 +13,8 @@ use App\TransactionData\TransactionData;
 
 class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
 {
-    private float $feePercentage;
-    private float $feeMaxFreeAmount;
+    private string $feePercentage;
+    private string $feeMaxFreeAmount;
     private int $feeFreeOperationsCount;
     private string $defaultCurrency;
     private WithdrawPrivateClientWeekTransactionHistory $history;
@@ -22,8 +22,8 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     private Math $math;
 
     public function __construct(
-        float $feePercentage,
-        float $feeMaxFreeAmount,
+        string $feePercentage,
+        string $feeMaxFreeAmount,
         int $feeFreeOperationsCount,
         string $defaultCurrency
     ) {
@@ -74,7 +74,7 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
     {
         $transactions = $this->history->getSameWeekTransactions($transaction);
         $defaultCurrencyAmount = $this->convertToDefaultCurrency($transaction->getCurrency(), $transaction->getAmount());
-        $feeAmount = $this->math->max($this->math->substract($defaultCurrencyAmount, (string) $this->feeMaxFreeAmount), '0.0');
+        $feeAmount = $this->math->max($this->math->substract($defaultCurrencyAmount, $this->feeMaxFreeAmount), '0.0');
 
         if (!empty($transactions)) {
             $feeAmount = $this->getTransactionsFeeAmount($transactions, $defaultCurrencyAmount);
@@ -86,7 +86,7 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
 
         $this->history->addTransaction($transaction);
 
-        return $this->math->percentage($feeAmount, (string) $this->feePercentage);
+        return $this->math->percentage($feeAmount, $this->feePercentage);
     }
 
     /**
@@ -99,10 +99,10 @@ class WithdrawPrivateClientFeeCalculator implements FeeCalculatorInterface
         if ($this->feeFreeOperationsCount > count($transactions)) {
             $previousTotal = $this->getTransactionsTotalAmount($transactions);
 
-            if ($this->math->moreThan((string) $this->feeMaxFreeAmount, $previousTotal)) {
+            if ($this->math->moreThan($this->feeMaxFreeAmount, $previousTotal)) {
                 $total = $this->math->add($previousTotal, $defaultCurrencyAmount);
                 $feeAmount = $this->math->max(
-                    $this->math->substract($total, (string) $this->feeMaxFreeAmount),
+                    $this->math->substract($total, $this->feeMaxFreeAmount),
                     '0.0'
                 );
             }

@@ -43,12 +43,7 @@ class Math
 
     public function equals(string $num1, string $num2): bool
     {
-        return 0 === $this->compare($num1, $num2);
-    }
-
-    public function lessThan(string $num1, string $num2): bool
-    {
-        return -1 === $this->compare($num1, $num2);
+        return !$this->compare($num1, $num2);
     }
 
     public function moreThan(string $num1, string $num2): bool

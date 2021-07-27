@@ -10,10 +10,10 @@ parameters:
     jpy:
       scale: 0
 
-  fee_percentage.deposit: 0.03
-  fee_percentage.withdraw_private_client: 0.3
-  fee_percentage.withdraw_business_client: 0.5
-  fee_max_free_amount: 1000
+  fee_percentage.deposit: '0.03'
+  fee_percentage.withdraw_private_client: '0.3'
+  fee_percentage.withdraw_business_client: '0.5'
+  fee_max_free_amount: '1000'
   fee_free_operations_count: 3
 
   api.currency_layer.domain: 'http://api.exchangeratesapi.io/v1'
