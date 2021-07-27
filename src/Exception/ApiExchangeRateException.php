@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace App\Exception;
 
-class ApiCurrencyLayerException extends AppException
+class ApiExchangeRateException extends AppException
 {
 }

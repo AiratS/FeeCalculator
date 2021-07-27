@@ -16,8 +16,8 @@ parameters:
   fee_max_free_amount: 1000
   fee_free_operations_count: 3
 
-  api.currency_layer.domain: 'http://api.currencylayer.com'
-  api.currency_layer.access_key: 'cce4d0539a291173c629e6a164e6e3da'
+  api.currency_layer.domain: 'http://api.exchangeratesapi.io/v1'
+  api.currency_layer.access_key: '81e4e2eca96f5c247034a8f506e99088'
 
   math.calculation_scale: 6
 
@@ -72,18 +72,20 @@ services:
   app.withdraw_private_client_week_transaction_history:
     class: App\FeeCalculator\WithdrawPrivateClientWeekTransactionHistory
 
-  app.api_currency_layer:
-    class: App\Service\ApiCurrencyLayer
+  app.api_exchange_rate:
+    class: App\Service\ApiExchangeRate
     arguments:
       - '@vendor.http_client'
       - '%api.currency_layer.domain%'
       - '%api.currency_layer.access_key%'
+      - '%currency.default%'
 
   app.currency_converter:
     class: App\Service\CurrencyConverter
     arguments:
-      - '@app.api_currency_layer'
+      - '@app.api_exchange_rate'
       - '@app.math'
+      - '%currency.default%'
 
   app.math:
     class: App\Service\Math

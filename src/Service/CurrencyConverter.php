@@ -10,14 +10,16 @@ use App\Exception\CurrencyConverterException;
 
 class CurrencyConverter
 {
-    private ApiCurrencyLayer $apiCurrencyLayer;
+    private ApiExchangeRate $apiExchangeRate;
     private Math $math;
+    private string $defaultCurrency;
     private array $rates = [];
 
-    public function __construct(ApiCurrencyLayer $apiCurrencyLayer, Math $math)
+    public function __construct(ApiExchangeRate $apiExchangeRate, Math $math, string $defaultCurrency)
     {
-        $this->apiCurrencyLayer = $apiCurrencyLayer;
+        $this->apiExchangeRate = $apiExchangeRate;
         $this->math = $math;
+        $this->defaultCurrency = $defaultCurrency;
     }
 
     /**
@@ -26,32 +28,38 @@ class CurrencyConverter
     public function convert(string $currentCurrency, string $targetCurrency, string $currentAmount): string
     {
         try {
-            if ($this->math->equals($currentAmount, '0.0')) {
-                return '0.0';
+            if ($this->defaultCurrency === $currentCurrency) {
+                return $this->convertDefaultToGiven($currentAmount, $this->getCurrencyRate($targetCurrency));
             }
 
-            $currentBaseRate = $this->getBaseRate($currentCurrency);
-            $targetBaseRate = $this->getBaseRate($targetCurrency);
-
-            return $this->math->divide($this->math->multiply($currentAmount, $targetBaseRate), $currentBaseRate);
+            return $this->convertToDefault($currentAmount, $this->getCurrencyRate($currentCurrency));
         } catch (Exception $exception) {
             throw new CouldNotConvertCurrencyException('Could not convert currency', 0, $exception);
         }
     }
 
+    private function convertToDefault(string $amount, string $rate): string
+    {
+        return $this->math->divide($amount, $rate);
+    }
+
+    private function convertDefaultToGiven(string $amount, string $rate): string
+    {
+        return $this->math->multiply($amount, $rate);
+    }
+
     /**
      * @throws CurrencyConverterException
      */
-    private function getBaseRate(string $currency): string
+    private function getCurrencyRate(string $currency): string
     {
         $rates = $this->getRates();
-        $key = ApiCurrencyLayer::BASE_CURRENCY . $currency;
 
-        if (!isset($rates[$key])) {
+        if (!isset($rates[$currency])) {
             throw new CurrencyConverterException(sprintf('The given currency "%s" is not found in rates.', $currency));
         }
 
-        return (string) $rates[$key];
+        return (string) $rates[$currency];
     }
 
     /**
@@ -61,7 +69,7 @@ class CurrencyConverter
     {
         try {
             if (empty($this->rates)) {
-                $this->rates = $this->apiCurrencyLayer->getExchangeRateData();
+                $this->rates = $this->apiExchangeRate->getExchangeRateData();
             }
 
             return $this->rates;
