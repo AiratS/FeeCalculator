@@ -22,31 +22,29 @@ class FeeCalculatorsContainerValidTest extends AbstractFeeCalculatorsTest
         $this->assertEquals($calculatorClass, get_class($calculator));
     }
 
-    public function feeCalculatorsContainerData(): iterable
+    public function feeCalculatorsContainerData(): array
     {
-        // Valid types
-        yield [
-            'operationType' => TransactionOperationType::DEPOSIT,
-            'userType' => TransactionUserType::PRIVATE,
-            'calculatorClass' => DepositFeeCalculator::class,
-        ];
-
-        yield [
-            'operationType' => TransactionOperationType::DEPOSIT,
-            'userType' => TransactionUserType::BUSINESS,
-            'calculatorClass' => DepositFeeCalculator::class,
-        ];
-
-        yield [
-            'operationType' => TransactionOperationType::WITHDRAW,
-            'userType' => TransactionUserType::PRIVATE,
-            'calculatorClass' => WithdrawPrivateClientFeeCalculator::class,
-        ];
-
-        yield [
-            'operationType' => TransactionOperationType::WITHDRAW,
-            'userType' => TransactionUserType::BUSINESS,
-            'calculatorClass' => WithdrawBusinessClientFeeCalculator::class,
+        return [
+            [
+                'operationType' => TransactionOperationType::DEPOSIT,
+                'userType' => TransactionUserType::PRIVATE,
+                'calculatorClass' => DepositFeeCalculator::class,
+            ],
+            [
+                'operationType' => TransactionOperationType::DEPOSIT,
+                'userType' => TransactionUserType::BUSINESS,
+                'calculatorClass' => DepositFeeCalculator::class,
+            ],
+            [
+                'operationType' => TransactionOperationType::WITHDRAW,
+                'userType' => TransactionUserType::PRIVATE,
+                'calculatorClass' => WithdrawPrivateClientFeeCalculator::class,
+            ],
+            [
+                'operationType' => TransactionOperationType::WITHDRAW,
+                'userType' => TransactionUserType::BUSINESS,
+                'calculatorClass' => WithdrawBusinessClientFeeCalculator::class,
+            ],
         ];
     }
 }

@@ -23,33 +23,29 @@ class FeeCalculatorsContainerInvalidTest extends AbstractFeeCalculatorsTest
         $calculatorsContainer->getCalculator($operationType, $userType);
     }
 
-    public function feeCalculatorsContainerInvalidData(): iterable
+    public function feeCalculatorsContainerInvalidData(): array
     {
-        // Some field is invalid
-        yield [
-            'operationType' => TransactionOperationType::DEPOSIT,
-            'userType' => self::TRANSACTION_USER_TYPE_INVALID,
-        ];
-
-        yield [
-            'operationType' => TransactionOperationType::WITHDRAW,
-            'userType' => self::TRANSACTION_USER_TYPE_INVALID,
-        ];
-
-        yield [
-            'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
-            'userType' => TransactionUserType::PRIVATE,
-        ];
-
-        yield [
-            'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
-            'userType' => TransactionUserType::BUSINESS,
-        ];
-
-        // All fields are invalid
-        yield [
-            'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
-            'userType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
+        return [
+            [
+                'operationType' => TransactionOperationType::DEPOSIT,
+                'userType' => self::TRANSACTION_USER_TYPE_INVALID,
+            ],
+            [
+                'operationType' => TransactionOperationType::WITHDRAW,
+                'userType' => self::TRANSACTION_USER_TYPE_INVALID,
+            ],
+            [
+                'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
+                'userType' => TransactionUserType::PRIVATE,
+            ],
+            [
+                'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
+                'userType' => TransactionUserType::BUSINESS,
+            ],
+            [
+                'operationType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
+                'userType' => self::TRANSACTION_OPERATION_TYPE_INVALID,
+            ],
         ];
     }
 }
