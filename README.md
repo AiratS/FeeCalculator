@@ -12,6 +12,7 @@
 
 Application installation:
 - Run  `docker-compose build` in `<application-root>/docker` directory to build containers.<br/>
+- Run `docker-compose run app composer install` to install php dependencies.
 
 ### How to run the application
 
