@@ -2,8 +2,10 @@ version: "3.3"
 services:
     app:
         build:
-            context: ..
-            dockerfile: ./docker/Dockerfile
+            context: ./
+            dockerfile: Dockerfile
             args:
                 USER_ID: ${USER_ID:-0}
                 GROUP_ID: ${GROUP_ID:-0}
+        volumes:
+            - ..:/app
